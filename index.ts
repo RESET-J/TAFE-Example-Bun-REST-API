@@ -1,4 +1,5 @@
 import { serve, file } from 'bun';
+import { connect } from './data/ArticleData.js';
  
 const PORT = 6989;
 
@@ -34,6 +35,9 @@ serve({
     
     const match = pathname.match(pathRegexForID);
 
+    // DATABASE
+    connect();
+
     // ROUTING
     if ( pathname === "/" ) {
       return new Response(index);
@@ -46,6 +50,10 @@ serve({
 
       // POST
       if ( method === "POST" ) {
+        const newPost: any = await request.json();
+
+        console.log(newPost.title);
+        // console.log(newPost);
         // return addArticle(request);
       }
     }
@@ -71,7 +79,7 @@ function getArticle(request: any, id: Number | null): Response {
   return new Response(JSON.stringify(article));
 }
 
-function addArticle(request: any): Response {
+function addArticle(request: any, newItem: any): Response {
   // code to add value to database
   return new Response("Added Successfully!");
 }
