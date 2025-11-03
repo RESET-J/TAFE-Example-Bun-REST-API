@@ -70,16 +70,16 @@ serve({
 });
 
 // rest responses
-function returnArticles(request: any): Response {
+function getAllPostRequest(request: any): Response {
   return new Response(JSON.stringify(items));
 }
 
-function getArticle(request: any, id: Number | null): Response {
+function getPostRequest(request: any, id: Number | null): Response {
   let article = items.find((item) => item.id === id );
   return new Response(JSON.stringify(article));
 }
 
-function addArticle(request: any, newItem: any): Response {
+function postPostRequest(request: any, newItem: any): Response {
   // code to add value to database
   return new Response("Added Successfully!");
 }
