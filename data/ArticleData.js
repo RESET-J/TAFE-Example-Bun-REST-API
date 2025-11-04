@@ -25,7 +25,7 @@ export function getPosts() {
 }
 
 export function getPost(id) {
-    const query = connection.query(`SELECT * FROM post WHERE id == '?';`)
+    const query = connection.query(`SELECT * FROM post WHERE id == ?;`)
 
     let item = query.get(id);
 
@@ -33,7 +33,145 @@ export function getPost(id) {
 }
 
 export function addPost(data) {
-    const query = connection.query(`INSERT INTO post VALUES ( ?, ?, ? );`);
+    const query = connection.query(`INSERT INTO post (title, body, author) VALUES ( ?, ?, ? );`);
 
-    query.run();
+    query.run(data.title, data.body, data.author);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

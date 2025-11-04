@@ -1,5 +1,5 @@
 import { serve, file } from 'bun';
-import { connect } from './data/ArticleData.js';
+import { connect, getPosts, getPost, addPost } from './data/ArticleData.js';
  
 const PORT = 6989;
 
@@ -45,23 +45,20 @@ serve({
     else if ( pathname === "/api/posts") {
       // GET
       if ( method === "GET" && !match ) {
-        return returnArticles(request);
+        return getAllPostRequest(request);
       }
 
       // POST
       if ( method === "POST" ) {
-        const newPost: any = await request.json();
-
-        console.log(newPost.title);
-        // console.log(newPost);
-        // return addArticle(request);
+        const newPost: any = await request.json()
+        return postPostRequest(request, newPost);
       }
     }
     else if ( method === "GET" && match ) {
       const id = match && match[1];
         console.log(id);
         // return specific post
-        return getArticle(request, id ? parseInt(id) : null);
+        return getPostRequest(request, id ? parseInt(id) : null);
     }
 
     return new Response("hello, World!");
@@ -71,17 +68,34 @@ serve({
 
 // rest responses
 function getAllPostRequest(request: any): Response {
+  const items = getPosts();
+
   return new Response(JSON.stringify(items));
 }
 
 function getPostRequest(request: any, id: Number | null): Response {
-  let article = items.find((item) => item.id === id );
-  return new Response(JSON.stringify(article));
+  let item = getPost(id);
+
+  if ( !item ) {
+    return new Response('Post Not Found', { status: 404 } );
+  }
+
+  return new Response(JSON.stringify(item));
 }
 
 function postPostRequest(request: any, newItem: any): Response {
+  if ( !newItem ) {
+    return new Response("Error, item cannot be added! AAAAA");
+  }
   // code to add value to database
-  return new Response("Added Successfully!");
+  //try {
+    addPost(newItem);
+
+    return new Response("Successfully added the post");
+  //}
+  // catch {
+  //   return new Response("Error, item cannot!");
+  // }
 }
  
 console.log(`Listening on http://localhost:${PORT} ...`);
