@@ -1,5 +1,6 @@
 import { serve, file } from 'bun';
-import { connect, getPosts, getPost, addPost, editPost } from './data/ArticleData.js';
+import { connect, getPosts, getPost, addPost, editPost, deletePost } from './data/ArticleData.js';
+import { ExitStatus } from 'typescript';
  
 const PORT = 6989;
 
@@ -58,6 +59,14 @@ serve({
       if ( method === "PATCH" ) {
         const postChanges: any = await request.json();
         return patchPostRequest(request, postChanges);
+      }
+
+      // DELETE
+      if ( method === "DELETE" ) {
+        const item : any = await request.json();
+        const id = item.id;
+
+        return deletePostRequest(request, id);
       }
     }
     else if ( method === "GET" && match ) {
@@ -118,5 +127,17 @@ function patchPostRequest(request: any, itemChanges: any): Response {
 
   return new Response('Post Successfully Modified', { status: 200 });
 }
+
+function deletePostRequest(request: any, id: Number | null): Response {
+  if ( !id ) {
+    return new Response('Error must have an associated Post id', {status: 404});
+  }
+
+  deletePost(id);
+
+  return new Response('Post Successfully Deleted', { status: 200 });
+}
+
+
  
 console.log(`Listening on http://localhost:${PORT} ...`);

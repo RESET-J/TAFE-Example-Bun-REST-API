@@ -63,6 +63,12 @@ export function editPost(data) {
     return item.id;
 }
 
+export function deletePost(id) {
+    const query = connection.query(`DELETE FROM post WHERE id == ?;`);
+
+    query.run(id);
+}
+
 
 
 
