@@ -1,5 +1,5 @@
 import { serve, file } from 'bun';
-import { connect, getPosts, getPost, addPost } from './data/ArticleData.js';
+import { connect, getPosts, getPost, addPost, editPost } from './data/ArticleData.js';
  
 const PORT = 6989;
 
@@ -53,6 +53,12 @@ serve({
         const newPost: any = await request.json()
         return postPostRequest(request, newPost);
       }
+
+      // PATCH
+      if ( method === "PATCH" ) {
+        const postChanges: any = await request.json();
+        return patchPostRequest(request, postChanges);
+      }
     }
     else if ( method === "GET" && match ) {
       const id = match && match[1];
@@ -96,6 +102,21 @@ function postPostRequest(request: any, newItem: any): Response {
   // catch {
   //   return new Response("Error, item cannot!");
   // }
+}
+
+function patchPostRequest(request: any, itemChanges: any): Response {
+  if (!itemChanges.id) {
+    return new Response('Error must have an associated Post id', { status: 404 });
+  }
+  
+  // modify the data
+  const data = editPost(itemChanges);
+
+  if ( !data ) {
+    return new Response('Post Not Found', { status: 404 });
+  }
+
+  return new Response('Post Successfully Modified', { status: 200 });
 }
  
 console.log(`Listening on http://localhost:${PORT} ...`);

@@ -38,6 +38,31 @@ export function addPost(data) {
     query.run(data.title, data.body, data.author);
 }
 
+export function editPost(data) {
+    const item = getPost(data.id);
+
+    if ( !item ) {
+        return null;
+    }
+
+    console.log(item.id);
+    const query = connection.query(
+        `UPDATE post 
+        SET 
+        title = COALESCE(?, title), 
+        body = COALESCE(?, body), 
+        author = COALESCE(?, author)
+        WHERE id = ?;
+        `
+    );
+
+    // query.prepare();
+
+    query.run(data.title || null, data.body || null, data.author || null, item.id);
+
+    return item.id;
+}
+
 
 
 
