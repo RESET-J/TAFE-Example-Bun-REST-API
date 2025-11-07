@@ -1,7 +1,7 @@
 import { serve, file } from 'bun';
 import { connect, getPosts, getPost, addPost, editPost, deletePost } from './data/ArticleData.js';
 import { ExitStatus } from 'typescript';
- 
+
 const PORT = 6989;
 
 const items = [
@@ -25,7 +25,14 @@ const items = [
   }
 
 ]
- 
+
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*", // Allow all origins
+  "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  'Content-Type': 'application/json',
+}
+
 serve({
   port: PORT,
   async fetch(request) {
@@ -33,51 +40,51 @@ serve({
     const { method } = request;
     const { pathname } = new URL(request.url);
     const pathRegexForID = /^\/api\/posts\/(\d+)$/;
-    
+
     const match = pathname.match(pathRegexForID);
 
     // DATABASE
     connect();
 
     // ROUTING
-    if ( pathname === "/" ) {
+    if (pathname === "/") {
       return new Response(index);
     }
-    else if ( pathname === "/api/posts") {
+    else if (pathname === "/api/posts") {
       // GET
-      if ( method === "GET" && !match ) {
+      if (method === "GET" && !match) {
         return getAllPostRequest(request);
       }
 
       // POST
-      if ( method === "POST" ) {
+      if (method === "POST") {
         const newPost: any = await request.json()
         return postPostRequest(request, newPost);
       }
 
       // PATCH
-      if ( method === "PATCH" ) {
+      if (method === "PATCH") {
         const postChanges: any = await request.json();
         return patchPostRequest(request, postChanges);
       }
 
       // DELETE
-      if ( method === "DELETE" ) {
-        const item : any = await request.json();
+      if (method === "DELETE") {
+        const item: any = await request.json();
         const id = item.id;
 
         return deletePostRequest(request, id);
       }
     }
-    else if ( method === "GET" && match ) {
+    else if (method === "GET" && match) {
       const id = match && match[1];
-        console.log(id);
-        // return specific post
-        return getPostRequest(request, id ? parseInt(id) : null);
+      console.log(id);
+      // return specific post
+      return getPostRequest(request, id ? parseInt(id) : null);
     }
 
     return new Response("hello, World!");
-      
+
   },
 });
 
@@ -85,28 +92,28 @@ serve({
 function getAllPostRequest(request: any): Response {
   const items = getPosts();
 
-  return new Response(JSON.stringify(items));
+  return new Response(JSON.stringify(items), { headers: CORS_HEADERS });
 }
 
 function getPostRequest(request: any, id: Number | null): Response {
   let item = getPost(id);
 
-  if ( !item ) {
-    return new Response('Post Not Found', { status: 404 } );
+  if (!item) {
+    return new Response('Post Not Found', { status: 404 });
   }
 
   return new Response(JSON.stringify(item));
 }
 
 function postPostRequest(request: any, newItem: any): Response {
-  if ( !newItem ) {
+  if (!newItem) {
     return new Response("Error, item cannot be added! AAAAA");
   }
   // code to add value to database
   //try {
-    addPost(newItem);
+  addPost(newItem);
 
-    return new Response("Successfully added the post");
+  return new Response("Successfully added the post");
   //}
   // catch {
   //   return new Response("Error, item cannot!");
@@ -117,11 +124,11 @@ function patchPostRequest(request: any, itemChanges: any): Response {
   if (!itemChanges.id) {
     return new Response('Error must have an associated Post id', { status: 404 });
   }
-  
+
   // modify the data
   const data = editPost(itemChanges);
 
-  if ( !data ) {
+  if (!data) {
     return new Response('Post Not Found', { status: 404 });
   }
 
@@ -129,8 +136,8 @@ function patchPostRequest(request: any, itemChanges: any): Response {
 }
 
 function deletePostRequest(request: any, id: Number | null): Response {
-  if ( !id ) {
-    return new Response('Error must have an associated Post id', {status: 404});
+  if (!id) {
+    return new Response('Error must have an associated Post id', { status: 404 });
   }
 
   deletePost(id);
@@ -139,5 +146,5 @@ function deletePostRequest(request: any, id: Number | null): Response {
 }
 
 
- 
+
 console.log(`Listening on http://localhost:${PORT} ...`);
