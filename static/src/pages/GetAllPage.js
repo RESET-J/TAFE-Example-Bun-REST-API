@@ -33,7 +33,7 @@ export default function GetAllPage() {
     return (
         status === 'error' ? <>Error, the data could not be retreived</> :
             <div className="d-flex flex-column gap-3 w-100" style={{minHeight: '200px'}}>
-                {data.map((item) => <Post {...item} />)}
+                {data.map((item) => <Post key={item.id} {...item} />)}
             </div>
     )
 }

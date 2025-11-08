@@ -106,21 +106,21 @@ function getPostRequest(request: any, id: Number | null): Response {
   let item = getPost(id);
 
   if (!item) {
-    return new Response('Post Not Found', { status: 404 });
+    return new Response('Post Not Found', { status: 404, headers: CORS_HEADERS });
   }
 
-  return new Response(JSON.stringify(item));
+  return new Response(JSON.stringify(item), { headers: CORS_HEADERS });
 }
 
 function postPostRequest(request: any, newItem: any): Response {
   if (!newItem) {
-    return new Response("Error, item cannot be added! AAAAA");
+    return new Response("Error, item cannot be added! AAAAA", { headers: CORS_HEADERS, status: 404 });
   }
   // code to add value to database
   //try {
   addPost(newItem);
 
-  return new Response("Successfully added the post");
+  return new Response("Successfully added the post", { headers: CORS_HEADERS, status: 200});
   //}
   // catch {
   //   return new Response("Error, item cannot!");
