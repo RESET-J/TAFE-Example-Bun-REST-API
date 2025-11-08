@@ -33,7 +33,7 @@ export function App() {
             DELETE
           </button>
         </div>
-        <div className="d-flex p-4">
+        <div className="d-flex p-4 w-100">
           <Routes>
             <Route path="/" element={<GetAllPage />}/>
           </Routes>

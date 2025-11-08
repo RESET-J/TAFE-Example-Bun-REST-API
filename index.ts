@@ -27,7 +27,7 @@ const items = [
 ]
 
 const CORS_HEADERS = {
-  "Access-Control-Allow-Origin": "*", // Allow all origins
+  "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
   'Content-Type': 'application/json',
@@ -42,6 +42,13 @@ serve({
     const pathRegexForID = /^\/api\/posts\/(\d+)$/;
 
     const match = pathname.match(pathRegexForID);
+
+    if (request.method === "OPTIONS") {
+      return new Response(null, { 
+        status: 204, // No Content
+        headers: CORS_HEADERS 
+      });
+    }
 
     // DATABASE
     connect();
